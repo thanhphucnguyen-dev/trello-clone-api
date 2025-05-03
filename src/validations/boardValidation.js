@@ -1,7 +1,7 @@
 import Joi from 'joi'
 import { StatusCodes } from 'http-status-codes'
 
-const createNew = async (req, res) => {
+const createNew = async (req, res, next) => {
   /**
    * Note: mặc định chúng ta không cần phải custom message ở phí BE vì để cho FE tự validate và custom message phía BE cho đẹp
    * BE chỉ cần validate đảm bảo dữ liệu chuẩn xác, và trả về message mặc định từ thư viện là được.
@@ -24,9 +24,8 @@ const createNew = async (req, res) => {
     // console.log('red.body: ', req.body)
     // set abortEarly: false: để TH có nhiều lỗi validation thì trả về tất cả lỗi (video52)
     await correctCondition.validateAsync(req.body, { abortEarly: false })
-    // next()
-
-    res.status(StatusCodes.CREATED).json({ message: 'POST from Validation: API create new board' })
+    // Validate dữ liệu xong thì chuyển cho request đi tiếp sang Controller
+    next()
   } catch (error) {
     // console.log(error)
     // console.log(new Error())
